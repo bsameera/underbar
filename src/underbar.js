@@ -98,9 +98,9 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    var index = -1;
+    var index;
     var uniqResult = [];
-    var k, finalResult = [];
+    var finalResult = [];
     var sortedArray = array.slice();
     if(iterator===undefined) iterator = _.identity;
     if(isSorted===false) {
@@ -118,8 +118,8 @@
       }
     });
     for(var i=0; i<uniqResult.length; i++) {
-      k = _.indexOf(mapped, uniqResult[i]);
-      finalResult.push(sortedArray[k]);
+      index = _.indexOf(mapped, uniqResult[i]);
+      finalResult.push(sortedArray[index]);
     }
     return finalResult;
   };
