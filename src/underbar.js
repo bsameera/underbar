@@ -335,11 +335,13 @@
     var memo = {};
 
     return function() {
-      var args = JSON.stringify(arguments);
-      if (!memo[args]) {
-        memo[args] = func.apply(this, arguments);
+      var key = JSON.stringify(arguments);
+      var value = func(...arguments);
+      if (!memo[key]) {
+       // memo[key] = func.apply(this, arguments);
+       memo[key] = value;
       }
-      return memo[args];
+      return memo[key];
     };
   };
 
@@ -390,7 +392,21 @@
 
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
+  // https://johnresig.com/blog/objectgetprototypeof/
   _.invoke = function(collection, functionOrKey, args) {
+    var result = [];
+    if(typeof functionOrKey === 'function') {
+      _.each(collection, function(item) {
+        //result.push(functionOrKey.apply(item, args));
+        result.push(functionOrKey.call(item));
+      });
+    } else {
+      _.each(collection, function(item) {
+        var proto = Object.getPrototypeOf(item);
+        result.push(proto[functionOrKey].apply(item, args));
+      });
+    }
+    return result;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -406,6 +422,19 @@
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    var result = [];
+    var args = [...arguments];
+  //console.log('args - ',args);
+    var max = Math.max(..._.map(args, (arr)=>arr.length));
+  //console.log('max - '+max);
+    for(var i=0; i<max; i++) {
+      var group = [];
+      _.each(args, (arg) => {
+        group.push(arg[i]);
+      });
+    result.push(group);
+    }
+    return result;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -413,11 +442,29 @@
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    var result = [];
+    var temp = nestedArray.slice();
+    /*for(var i=0; i<temp.length; i++) {
+      if(Array.isArray(temp[i])) {
+      result = result.concat(_.flatten(temp[i]));
+    } else {
+      result.push(temp[i]);
+    }
+    }    */
+    _.each(temp, (ele) => {
+      if(Array.isArray(ele)) {
+        result = result.concat(_.flatten(ele));
+      } else {
+        result.push(ele);
+      }
+    });
+    return result;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
-  _.intersection = function() {
+  _.intersection = function(first, second) {
+    return _.filter(first, (ele) => _.contains(second, ele));
   };
 
   // Take the difference between one array and a number of other arrays.
