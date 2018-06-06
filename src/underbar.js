@@ -111,12 +111,13 @@
       });
     }
     var mapped = _.map(sortedArray, iterator);
-    //console.log(mapped);
+    //console.log(mapped);  [true, false, false, false, false, false] for array = [1, 2, 2, 3, 4, 4];
     _.each(mapped, function(item) {
       if(_.indexOf(uniqResult, item) === -1) {
         uniqResult.push(item);
       }
     });
+    //uniqResult = [true, false]
     for(var i=0; i<uniqResult.length; i++) {
       index = _.indexOf(mapped, uniqResult[i]);
       finalResult.push(sortedArray[index]);
@@ -315,7 +316,8 @@
       if (!alreadyCalled) {
         // TIP: .apply(this, arguments) is the standard way to pass on all of the
         // infromation from one function call to another.
-        result = func.apply(this, arguments);
+        //result = func.apply(this, arguments);
+        result = func(...arguments);
         alreadyCalled = true;
       }
       // The new function always returns the originally computed result.
@@ -336,9 +338,10 @@
 
     return function() {
       var key = JSON.stringify(arguments);
-      var value = func(...arguments);
+      //var value = func(...arguments);
       if (!memo[key]) {
        // memo[key] = func.apply(this, arguments);
+       var value = func(...arguments);
        memo[key] = value;
       }
       return memo[key];
@@ -386,7 +389,7 @@
    * ADVANCED
    * =================
    *
-   * Note: This is the end of the pre-course curriculum. Feel free to continue,
+   * Note: This is the end of the pre-course cur riculum. Feel free to continue,
    * but nothing beyond here is required.
    */
 
